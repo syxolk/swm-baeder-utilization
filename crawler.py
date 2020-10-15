@@ -14,9 +14,8 @@ ORGANIZATIONS = [
 
 def main():
     while True:
-        print("Do it.")
         get_and_save_ticos_data(ORGANIZATIONS)
-        time.sleep(5)
+        time.sleep(60)
 
 
 def get_org_name_by_id(orgs, id):
