@@ -1,0 +1,87 @@
+[
+  {
+    "id": 30194,
+    "name": "bad-forstenrieder-park-hallenbad",
+    "display_name": "Bad Forstenrieder Park - Hallenbad"
+  },
+  {
+    "id": 30195,
+    "name": "bad-giesing-harlaching-hallenbad",
+    "display_name": "Bad Giesing-Harlaching - Hallenbad"
+  },
+  {
+    "id": 30190,
+    "name": "cosimawellenbad-hallenbad",
+    "display_name": "Cosimawellenbad - Hallenbad"
+  },
+  {
+    "id": 30191,
+    "name": "cosimawellenbad-sauna",
+    "display_name": "Cosimawellenbad - Sauna"
+  },
+  {
+    "id": 129,
+    "name": "dante-winter-warmfreibad",
+    "display_name": "Dante-Winter-Warmfreibad"
+  },
+  {
+    "id": 30200,
+    "name": "dantebad-sauna",
+    "display_name": "Dantebad - Sauna"
+  },
+  {
+    "id": 30208,
+    "name": "michaelibad-hallenbad",
+    "display_name": "Michaelibad - Hallenbad"
+  },
+  {
+    "id": 30203,
+    "name": "michaelibad-sauna",
+    "display_name": "Michaelibad - Sauna"
+  },
+  {
+    "id": 30197,
+    "name": "mullersches-volksbad-hallenbad",
+    "display_name": "M\u00fcller\u00b4sches Volksbad - Hallenbad"
+  },
+  {
+    "id": 30184,
+    "name": "nordbad-hallenbad-fitness",
+    "display_name": "Nordbad - Hallenbad & Fitness"
+  },
+  {
+    "id": 30185,
+    "name": "nordbad-sauna",
+    "display_name": "Nordbad - Sauna"
+  },
+  {
+    "id": 30182,
+    "name": "olympia-schwimmhalle",
+    "display_name": "Olympia-Schwimmhalle"
+  },
+  {
+    "id": 30206,
+    "name": "prinzregentenbad-sauna",
+    "display_name": "Prinzregentenbad - Sauna"
+  },
+  {
+    "id": 30187,
+    "name": "sudbad-hallenbad",
+    "display_name": "S\u00fcdbad - Hallenbad"
+  },
+  {
+    "id": 30188,
+    "name": "sudbad-sauna",
+    "display_name": "S\u00fcdbad - Sauna"
+  },
+  {
+    "id": 30199,
+    "name": "westbad-hallenbad",
+    "display_name": "Westbad - Hallenbad"
+  },
+  {
+    "id": 30207,
+    "name": "westbad-sauna",
+    "display_name": "Westbad - Sauna"
+  }
+]
