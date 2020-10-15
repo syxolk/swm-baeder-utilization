@@ -3,18 +3,21 @@ import requests
 import datetime
 from collections import namedtuple
 import time
+import json
+import sys
 
-Organization = namedtuple('Organization', ['name', 'id'])
+Organization = namedtuple('Organization', ["id", "display_name", "name"])
 
-ORGANIZATIONS = [
-    Organization(name="cosimawellenbad", id=30190),
-    Organization(name="cosimawellenbad_sauna", id=30191),
-    Organization(name="nordbad", id=30184),
-]
+def load_organizations(filename):
+    with open(filename) as file:
+        data = json.load(file)
+    return [Organization(**org) for org in data]
 
 def main():
+    orgs = load_organizations(sys.argv[1])
+
     while True:
-        get_and_save_ticos_data(ORGANIZATIONS)
+        get_and_save_ticos_data(orgs)
         time.sleep(60)
 
 
