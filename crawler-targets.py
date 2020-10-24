@@ -7,8 +7,7 @@ from slugify import slugify
 # https://github.com/un33k/python-slugify
 
 URLS = [
-    "https://www.swm.de/privatkunden/m-baeder/schwimmen/hallenbaeder.html",
-    "https://www.swm.de/privatkunden/m-baeder/sauna.html",
+    "https://www.swm.de/baeder/schwimmen-sauna/auslastung"
 ]
 
 def main():
