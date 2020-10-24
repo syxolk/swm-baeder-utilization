@@ -75,6 +75,11 @@
     "display_name": "S\u00fcdbad - Sauna"
   },
   {
+    "id": 30204,
+    "name": "volksbad-sauna",
+    "display_name": "Volksbad - Sauna"
+  },
+  {
     "id": 30199,
     "name": "westbad-hallenbad",
     "display_name": "Westbad - Hallenbad"
