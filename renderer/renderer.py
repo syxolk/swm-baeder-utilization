@@ -10,6 +10,10 @@ from datetime import datetime, timedelta
 import pytz
 from jinja2 import Environment, FileSystemLoader
 import time
+import logging
+
+logger = logging.getLogger("bad-auslastung")
+logger.setLevel(logging.DEBUG)
 
 env = Environment(
     loader=FileSystemLoader("./templates")
@@ -31,7 +35,7 @@ def load_data(input_dir, target_dir):
     orgs = []
     for file in os.listdir(input_dir):
         name = os.path.splitext(os.path.basename(file))[0]
-        print(f"Running {name} ...")
+        logger.info(f"Running {name} ...")
         df = pd.read_csv(os.path.join(input_dir, file), header=None, names=["ts", "cnt", "max"], index_col="ts", parse_dates=["ts"])
         df.index = df.index.tz_convert('Europe/Berlin')
         df.loc[df["cnt"] < 0, "cnt"] = 0 # fix data with invalid data
@@ -40,7 +44,7 @@ def load_data(input_dir, target_dir):
         org = Organization(name=name, df=df)
         render_org(org, target_dir)
         orgs.append(org)
-        print(f"Running {name} ... done")
+        logger.info(f"Running {name} ... done")
 
     render_landing_page(orgs, target_dir)
 
@@ -61,7 +65,7 @@ def render_org(org, target_dir):
 def render_heatmap_weekday_hour(org, target_dir):
     title = f"Heatmap {org.name}"
     df = org.df
-    max_util = df["max"].max()
+    max_util = df["cnt"].max()
     grouped_df = df[["cnt"]].groupby(pd.Grouper(freq="1H")).max()
     grouped_df['weekday'] = grouped_df.index.to_series().dt.weekday
     grouped_df['hour'] = grouped_df.index.to_series().dt.hour
@@ -145,13 +149,16 @@ def render_raw_last_24_hours(org, target_dir):
 
 
 def render_org_file(org, charts, target_dir):
-    rendered_html = single_org_template.render(name=org.name, charts=charts)
+    rendered_html = single_org_template.render(
+        name=org.name,
+        charts=charts,
+        created_at=datetime.now().isoformat())
     with open(os.path.join(target_dir, "index.html"), "w") as f:
         f.write(rendered_html)
 
 
 def render_landing_page(orgs, target_dir):
-    rendered_html = main_template.render(orgs=orgs)
+    rendered_html = main_template.render(orgs=orgs, created_at=datetime.now().isoformat())
     with open(os.path.join(target_dir, "index.html"), "w") as f:
         f.write(rendered_html)
 
