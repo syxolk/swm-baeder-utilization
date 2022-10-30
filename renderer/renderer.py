@@ -9,6 +9,7 @@ from tqdm import tqdm
 from datetime import datetime, timedelta
 import pytz
 from jinja2 import Environment, FileSystemLoader
+import time
 
 env = Environment(
     loader=FileSystemLoader("./templates")
@@ -21,8 +22,10 @@ Organization = namedtuple('Organization', ["name", "df"])
 Chart = namedtuple("Chart", ["title", "path"])
 
 def main():
-    data = load_data(sys.argv[1])
-    render(data, sys.argv[2])
+    while True:
+        data = load_data(sys.argv[1])
+        render(data, sys.argv[2])
+        time.sleep(5*60)
 
 
 def load_data(input_dir):
