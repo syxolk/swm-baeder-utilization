@@ -23,29 +23,26 @@ Chart = namedtuple("Chart", ["title", "path"])
 
 def main():
     while True:
-        data = load_data(sys.argv[1])
-        render(data, sys.argv[2])
+        load_data(sys.argv[1], sys.argv[2])
         time.sleep(5*60)
 
 
-def load_data(input_dir):
+def load_data(input_dir, target_dir):
     orgs = []
     for file in os.listdir(input_dir):
+        name = os.path.splitext(os.path.basename(file))[0]
+        print(f"Running {name} ...")
         df = pd.read_csv(os.path.join(input_dir, file), header=None, names=["ts", "cnt", "max"], index_col="ts", parse_dates=["ts"])
         df.index = df.index.tz_convert('Europe/Berlin')
-        name = os.path.splitext(os.path.basename(file))[0]
+        df.loc[df["cnt"] < 0, "cnt"] = 0 # fix data with invalid data
         df["util"] = df["cnt"] / df["max"]
         df["util_percent"] = df["util"] * 100
-        orgs.append(Organization(name=name, df=df))
-    return orgs
-
-
-def render(data, target_dir):
-    render_landing_page(data, target_dir)
-    for org in tqdm(data):
+        org = Organization(name=name, df=df)
         render_org(org, target_dir)
+        orgs.append(org)
+        print(f"Running {name} ... done")
 
-    
+    render_landing_page(orgs, target_dir)
 
 
 def render_org(org, target_dir):
