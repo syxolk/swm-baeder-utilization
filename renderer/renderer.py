@@ -80,7 +80,7 @@ def render_heatmap_weekday_hour(org, target_dir):
     f, ax = plt.subplots(figsize=(10, 10))
     ax = sns.heatmap(pivot, annot=True, fmt=".0f", linewidths=0, ax=ax, \
         xticklabels=day_short_names, yticklabels=detailed_hours, \
-        vmin=0, vmax=max_util, cmap="inferno")
+        cmap="inferno")
     ax.axes.set_title(title, fontsize=24, y=1.01)
     ax.set(xlabel='Weekday', ylabel='Hour')
     f.tight_layout()
