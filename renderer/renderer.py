@@ -8,6 +8,13 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from datetime import datetime, timedelta
 import pytz
+from jinja2 import Environment, FileSystemLoader
+
+env = Environment(
+    loader=FileSystemLoader("./templates")
+)
+single_org_template = env.get_template("single_org.html")
+main_template = env.get_template("main.html")
 
 
 Organization = namedtuple('Organization', ["name", "df"])
@@ -31,8 +38,11 @@ def load_data(input_dir):
 
 
 def render(data, target_dir):
+    render_landing_page(data, target_dir)
     for org in tqdm(data):
         render_org(org, target_dir)
+
+    
 
 
 def render_org(org, target_dir):
@@ -45,6 +55,7 @@ def render_org(org, target_dir):
         render_raw_last_24_hours(org, org_dir),
     ]
     plt.close("all")
+    render_org_file(org, charts, org_dir)
 
 
 def render_heatmap_weekday_hour(org, target_dir):
@@ -112,7 +123,7 @@ def render_raw_last_7_days(org, target_dir):
     f.tight_layout()
     file = f"lineplot-7d.svg"
     f.savefig(os.path.join(target_dir, file))
-    return Chart(title="Raw Utilization", path=file)
+    return Chart(title="Raw Utilization 7 days", path=file)
 
 
 def render_raw_last_24_hours(org, target_dir):
@@ -130,7 +141,19 @@ def render_raw_last_24_hours(org, target_dir):
     f.tight_layout()
     file = f"lineplot-24h.svg"
     f.savefig(os.path.join(target_dir, file))
-    return Chart(title="Raw Utilization", path=file)
+    return Chart(title="Raw Utilization 24 hours", path=file)
+
+
+def render_org_file(org, charts, target_dir):
+    rendered_html = single_org_template.render(name=org.name, charts=charts)
+    with open(os.path.join(target_dir, "index.html"), "w") as f:
+        f.write(rendered_html)
+
+
+def render_landing_page(orgs, target_dir):
+    rendered_html = main_template.render(orgs=orgs)
+    with open(os.path.join(target_dir, "index.html"), "w") as f:
+        f.write(rendered_html)
 
 
 if __name__ == "__main__":

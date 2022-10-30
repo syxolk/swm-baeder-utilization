@@ -5,6 +5,7 @@ from collections import namedtuple
 import time
 import json
 import sys
+from os import path
 
 Organization = namedtuple('Organization', ["id", "display_name", "name"])
 
@@ -17,7 +18,7 @@ def main():
     orgs = load_organizations(sys.argv[1])
 
     while True:
-        get_and_save_ticos_data(orgs)
+        get_and_save_ticos_data(orgs, sys.argv[2])
         time.sleep(60)
 
 
@@ -28,7 +29,7 @@ def get_org_name_by_id(orgs, id):
     raise ValueError(f"id not found: {id}")
 
 
-def get_and_save_ticos_data(orgs):
+def get_and_save_ticos_data(orgs, out_dir):
     data = get_raw_ticos([x.id for x in orgs])
     timestamp = datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
 
@@ -36,7 +37,7 @@ def get_and_save_ticos_data(orgs):
         name = get_org_name_by_id(orgs, x["organizationUnitId"])
         count = x["personCount"]
         max_count = x["maxPersonCount"]
-        with open(f"data/{name}.csv", "a") as file:
+        with open(path.join(out_dir, f"{name}.csv"), "a") as file:
             file.write(f"{timestamp},{count},{max_count}\n")
 
 

@@ -1,7 +1,27 @@
 version: "3.8"
 services:
   crawler:
-    build: .
+    build: ./crawler
     restart: unless-stopped
     volumes:
       - "./data:/app/data"
+  renderer:
+    build: ./renderer
+    restart: unless-stopped
+    volumes:
+      - "./data:/app/data:ro"
+      - "./out:/app/out"
+  caddy:
+    build: ./caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - "./out:/website:ro"
+
+volumes:
+  caddy_data:
+  caddy_config:

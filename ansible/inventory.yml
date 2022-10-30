@@ -1,0 +1,8 @@
+all:
+  hosts:
+    bad_auslastung:
+      ansible_host: 89.58.53.188
+  children:
+    production:
+      hosts:
+        bad_auslastung:

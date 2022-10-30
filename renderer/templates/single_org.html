@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ name }}</title>
+</head>
+<body>
+<h1>{{ name }}</h1>
+{% for chart in charts %}
+<h2>{{ chart.title }}</h2>
+<img src="{{ chart.path }}" />
+{% endfor %}
+</body>
+</html>

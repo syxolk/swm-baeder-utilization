@@ -1,0 +1,8 @@
+www.bad-auslastung.de {
+    root * /website
+    file_server
+}
+
+bad-auslastung.de {
+    redir https://www.bad-auslastung.de{uri}
+}

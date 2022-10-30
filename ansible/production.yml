@@ -1,0 +1,135 @@
+- hosts: production
+  tasks:
+    - name: "Allow Pubkey authentication"
+      become: yes
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^PubkeyAuthentication"
+        line: "PubkeyAuthentication yes"
+
+    - name: "Disallow empty passwords"
+      become: yes
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^PermitEmptyPasswords"
+        line: "PermitEmptyPasswords no"
+
+    - name: "Disallow ChallengeResponseAuthentication"
+      become: yes
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^ChallengeResponseAuthentication"
+        line: "ChallengeResponseAuthentication no"
+
+    - name: "Disallow password authentication"
+      become: yes
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^PasswordAuthentication"
+        line: "PasswordAuthentication no"
+
+    - name: "Restart ssh"
+      become: yes
+      systemd:
+        state: restarted
+        daemon_reload: yes
+        name: ssh
+
+    - name: Run apt-get update
+      become: yes
+      apt:
+        update_cache: yes
+
+    - name: Upgrade all packages to the latest version
+      become: yes
+      apt:
+        name: "*"
+        state: latest
+
+    - name: Remove dependencies that are no longer required
+      become: yes
+      apt:
+        autoremove: yes
+
+    - name: Install fail2ban
+      become: yes
+      apt:
+        name: fail2ban
+        state: present
+
+    - name: Install ufw
+      become: yes
+      apt:
+        name: ufw
+        state: present
+
+    - name: Allow SSH in UFW
+      become: yes
+      ufw:
+        rule: allow
+        port: "22"
+        proto: tcp
+    
+    - name: Allow HTTP in UFW
+      become: yes
+      ufw:
+        rule: allow
+        port: "80"
+        proto: tcp
+    
+    - name: Allow HTTPS in UFW
+      become: yes
+      ufw:
+        rule: allow
+        port: "443"
+        proto: tcp
+
+    - name: Set firewall default policy
+      become: yes
+      ufw:
+        state: enabled
+        default: reject
+
+# https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-18-04
+    - name: Install aptitude using apt
+      become: yes
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: yes
+        force_apt_get: yes
+    
+    - name: Install required system packages
+      become: yes
+      apt:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools', 'git']
+
+    - name: Add Docker GPG apt Key
+      become: yes
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      become: yes
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      become: yes
+      apt:
+        update_cache: yes
+        name: docker-ce
+        state: latest
+
+# https://www.techcrumble.net/2019/12/how-install-docker-and-docker-compose-using-ansible-playbooks/
+    - name: Install docker-compose
+      become: yes
+      get_url: 
+        url : https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: 'u+x,g+x,o+x'
