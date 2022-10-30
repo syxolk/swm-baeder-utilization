@@ -64,7 +64,9 @@ def render_org(org, target_dir):
 
 def render_heatmap_weekday_hour(org, target_dir):
     title = f"Heatmap"
-    df = org.df
+    now = datetime.now(pytz.utc)
+    now_minus_8_weeks = now - timedelta(weeks=8)
+    df = org.df[org.df.index > now_minus_8_weeks]
     max_util = df["cnt"].max()
     grouped_df = df[["cnt"]].groupby(pd.Grouper(freq="1H")).max()
     grouped_df['weekday'] = grouped_df.index.to_series().dt.weekday
@@ -89,14 +91,17 @@ def render_heatmap_weekday_hour(org, target_dir):
 
 def render_heatmap_week_weekday(org, target_dir):
     max_val = org.df["cnt"].max()
-    grouped_df = org.df[["cnt"]].groupby(pd.Grouper(freq="D")).max()
+    now = datetime.now(pytz.timezone('Europe/Berlin'))
+    now_minus_25_weeks = now - timedelta(weeks=25)
+    df = org.df[org.df.index > now_minus_25_weeks]
+    grouped_df = df[["cnt"]].groupby(pd.Grouper(freq="D")).max()
     index_isocal = grouped_df.index.to_series().dt.isocalendar()
     grouped_df['week'] = index_isocal.week + index_isocal.year * 100
     grouped_df['weekday'] = grouped_df.index.to_series().dt.weekday
     pivot = pd.pivot_table(grouped_df[['week', 'weekday', 'cnt']], index=['weekday', 'week'], aggfunc='max')
     pivot = pivot.unstack(level=0)
     pivot = pivot.reindex(columns=[("cnt", i) for i in range(7)])
-    min_date = org.df.index.min()
+    min_date = now_minus_25_weeks
     max_date = org.df.index.max() + timedelta(days=7)
     week_names = [d.strftime("%V") for d in pd.date_range(start=min_date, end=max_date, freq="W")]
     day_short_names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
