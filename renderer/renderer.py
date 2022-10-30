@@ -63,7 +63,7 @@ def render_org(org, target_dir):
 
 
 def render_heatmap_weekday_hour(org, target_dir):
-    title = f"Heatmap {org.name}"
+    title = f"Heatmap"
     df = org.df
     max_util = df["cnt"].max()
     grouped_df = df[["cnt"]].groupby(pd.Grouper(freq="1H")).max()
@@ -148,17 +148,21 @@ def render_raw_last_24_hours(org, target_dir):
     return Chart(title="Raw Utilization 24 hours", path=file)
 
 
+def format_now():
+    return datetime.now(pytz.timezone('Europe/Berlin')).isoformat('T', 'seconds')
+
+
 def render_org_file(org, charts, target_dir):
     rendered_html = single_org_template.render(
         name=org.name,
         charts=charts,
-        created_at=datetime.now().isoformat())
+        created_at=format_now())
     with open(os.path.join(target_dir, "index.html"), "w") as f:
         f.write(rendered_html)
 
 
 def render_landing_page(orgs, target_dir):
-    rendered_html = main_template.render(orgs=orgs, created_at=datetime.now().isoformat())
+    rendered_html = main_template.render(orgs=orgs, created_at=format_now())
     with open(os.path.join(target_dir, "index.html"), "w") as f:
         f.write(rendered_html)
 

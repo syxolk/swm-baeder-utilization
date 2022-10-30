@@ -7,7 +7,7 @@
 <h1>{{ name }}</h1>
 {% for chart in charts %}
 <h2>{{ chart.title }}</h2>
-<img src="{{ chart.path }}" />
+<img src="{{ chart.path }}" style="max-width: 100%;" />
 {% endfor %}
 
 Created: {{ created_at }}
