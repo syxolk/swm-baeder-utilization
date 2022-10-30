@@ -63,7 +63,7 @@ def render_org(org, target_dir):
 
 
 def render_heatmap_weekday_hour(org, target_dir):
-    title = f"Heatmap"
+    title = f"Auslastung zu Uhrzeiten je Wochentag (Median-Wert über letzte 8 Wochen)"
     now = datetime.now(pytz.utc)
     now_minus_8_weeks = now - timedelta(weeks=8)
     df = org.df[org.df.index > now_minus_8_weeks]
@@ -114,7 +114,7 @@ def render_heatmap_week_weekday(org, target_dir):
     f.tight_layout()
     file = "heatmap-week-weekday.svg"
     f.savefig(os.path.join(target_dir, file))
-    return Chart(title="Heatmap", path=file)
+    return Chart(title="Auslastung an Wochentagen über Kalenderwochen (Maximum über letzte 25 Wochen)", path=file)
 
 
 def render_raw_last_7_days(org, target_dir):
@@ -123,7 +123,6 @@ def render_raw_last_7_days(org, target_dir):
     now_minus_7_days = now - timedelta(days=7)
     filtered_df = org.df[org.df.index > now_minus_7_days]
     grouped_df = filtered_df[["cnt", "max"]].groupby(pd.Grouper(freq="15min")).max()
-    grouped_df["max"].plot(ax=ax)
     grouped_df["cnt"].plot.area(ax=ax)
     ax.grid(True)
     #ax.legend()
@@ -141,7 +140,6 @@ def render_raw_last_24_hours(org, target_dir):
     now_minus_24_hours = now - timedelta(hours=24)
     filtered_df = org.df[org.df.index > now_minus_24_hours]
     grouped_df = filtered_df[["cnt", "max"]].groupby(pd.Grouper(freq="5min")).max()
-    grouped_df["max"].plot(ax=ax)
     grouped_df["cnt"].plot.area(ax=ax)
     ax.grid(True)
     #ax.legend()
