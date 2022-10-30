@@ -3,4 +3,4 @@ RUN pip3 install requests
 WORKDIR /app
 COPY organizations.json .
 COPY crawler.py .
-CMD ["python3", "crawler.py", "organizations.json"]
+CMD ["python3", "crawler.py", "organizations.json", "/app/data"]
