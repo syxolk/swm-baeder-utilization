@@ -1,15 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ name }}</title>
-</head>
-<body>
-<h1>{{ name }}</h1>
-{% for chart in charts %}
-<h2>{{ chart.title }}</h2>
-<img src="{{ chart.path }}" style="max-width: 100%;" />
-{% endfor %}
+{% extends "base.html" %}
 
-Created: {{ created_at }}
-</body>
-</html>
+{% block head %}
+    <title>{{ name }}</title>
+{% endblock %}
+
+{% block header %}
+    <h1>{{ name }}</h1>
+{% endblock %}
+
+{% block main %}
+    {% for chart in charts %}
+    <h2>{{ chart.title }}</h2>
+    <img src="{{ chart.path }}" style="max-width: 100%;" />
+    {% endfor %}
+
+    Created: {{ created_at }}
+{% endblock %}

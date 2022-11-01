@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+from re import T
 import sys
 from collections import namedtuple
 import seaborn as sns
@@ -11,6 +12,7 @@ import pytz
 from jinja2 import Environment, FileSystemLoader
 import time
 import logging
+import shutil
 
 logger = logging.getLogger("bad-auslastung")
 
@@ -46,6 +48,7 @@ def load_data(input_dir, target_dir):
         logger.info(f"Running {name} ... done")
 
     render_landing_page(orgs, target_dir)
+    copy_static_files(target_dir)
 
 
 def render_org(org, target_dir):
@@ -165,6 +168,9 @@ def render_landing_page(orgs, target_dir):
     rendered_html = main_template.render(orgs=orgs, created_at=format_now())
     with open(os.path.join(target_dir, "index.html"), "w") as f:
         f.write(rendered_html)
+
+def copy_static_files(target_dir):
+    shutil.copytree("./static", os.path.join(target_dir, "static"), dirs_exist_ok=True)
 
 
 if __name__ == "__main__":
