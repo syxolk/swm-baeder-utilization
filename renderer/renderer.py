@@ -33,6 +33,8 @@ def main():
 
 
 def load_data(input_dir, target_dir):
+    copy_static_files(target_dir)
+
     orgs = []
     for file in sorted(os.listdir(input_dir)):
         name = os.path.splitext(os.path.basename(file))[0]
@@ -48,7 +50,6 @@ def load_data(input_dir, target_dir):
         logger.info(f"Running {name} ... done")
 
     render_landing_page(orgs, target_dir)
-    copy_static_files(target_dir)
 
 
 def render_org(org, target_dir):
