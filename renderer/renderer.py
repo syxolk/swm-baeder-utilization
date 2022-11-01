@@ -13,7 +13,6 @@ import time
 import logging
 
 logger = logging.getLogger("bad-auslastung")
-logger.setLevel(logging.DEBUG)
 
 env = Environment(
     loader=FileSystemLoader("./templates")
@@ -33,7 +32,7 @@ def main():
 
 def load_data(input_dir, target_dir):
     orgs = []
-    for file in os.listdir(input_dir):
+    for file in sorted(os.listdir(input_dir)):
         name = os.path.splitext(os.path.basename(file))[0]
         logger.info(f"Running {name} ...")
         df = pd.read_csv(os.path.join(input_dir, file), header=None, names=["ts", "cnt", "max"], index_col="ts", parse_dates=["ts"])
@@ -81,7 +80,6 @@ def render_heatmap_weekday_hour(org, target_dir):
     ax = sns.heatmap(pivot, annot=True, fmt=".0f", linewidths=0, ax=ax, \
         xticklabels=day_short_names, yticklabels=detailed_hours, \
         cmap="inferno")
-    ax.axes.set_title(title, fontsize=24, y=1.01)
     ax.set(xlabel='Weekday', ylabel='Hour')
     f.tight_layout()
     file = f"heatmap-weekday-hour.svg"
@@ -109,7 +107,6 @@ def render_heatmap_week_weekday(org, target_dir):
     f, ax = plt.subplots(figsize=(10, 10))
     ax = sns.heatmap(pivot, annot=True, fmt=".0f", linewidths=0, ax=ax, \
         xticklabels=day_short_names, yticklabels=week_names)
-    #ax.axes.set_title("Heatmap", fontsize=24, y=1.01)
     ax.set(xlabel='Weekday', ylabel='Week of Year')
     f.tight_layout()
     file = "heatmap-week-weekday.svg"
@@ -171,4 +168,13 @@ def render_landing_page(orgs, target_dir):
 
 
 if __name__ == "__main__":
+    logHandler = logging.StreamHandler()
+    logHandler.setLevel(logging.DEBUG)
+
+    logFormat = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    logHandler.setFormatter(logFormat)
+
+    logger.addHandler(logHandler)
+    logger.setLevel(logging.DEBUG)
+
     main()
