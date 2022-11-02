@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-    <title>Bad Auslastung</title>
+    <title>Vergleich</title>
 {% endblock %}
 
 {% block header %}
@@ -9,9 +9,9 @@
 {% endblock %}
 
 {% block main %}
-    <ul>
-    {% for org in orgs %}
-        <li><a href="{{ org.name }}">{{ org.name }}</a></li>
+    <h2>Vergleich</h2>
+    {% for chart in charts %}
+    <h3>{{ chart.title }}</h3>
+    <img src="{{ chart.path }}" />
     {% endfor %}
-    </ul>
 {% endblock %}

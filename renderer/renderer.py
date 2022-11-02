@@ -3,6 +3,7 @@ import os
 from re import T
 import sys
 from collections import namedtuple
+from typing import Iterable
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -21,6 +22,7 @@ env = Environment(
 )
 single_org_template = env.get_template("single_org.html")
 main_template = env.get_template("main.html")
+compare_template = env.get_template("compare_page.html")
 
 
 Organization = namedtuple('Organization', ["name", "df"])
@@ -45,9 +47,16 @@ def load_data(input_dir, target_dir):
         df["util"] = df["cnt"] / df["max"]
         df["util_percent"] = df["util"] * 100
         org = Organization(name=name, df=df)
-        render_org(org, target_dir)
+        #render_org(org, target_dir)
         orgs.append(org)
         logger.info(f"Running {name} ... done")
+
+    compare_dir =os.path.join(target_dir, "vergleich")
+    os.makedirs(compare_dir, exist_ok=True)
+    compare_charts = [
+        render_comparison(orgs, compare_dir)
+    ]
+    render_comparison_page(compare_charts, compare_dir)
 
     render_landing_page(orgs, target_dir)
 
@@ -152,6 +161,21 @@ def render_raw_last_24_hours(org, target_dir):
     return Chart(title="Raw Utilization 24 hours", path=file)
 
 
+def render_comparison(orgs: Iterable[Organization], target_dir):
+    f, ax = plt.subplots(figsize=(10, 6))
+    for org in orgs:
+        daily_grouped_df = org.df[["cnt", "max"]].groupby(pd.Grouper(freq="1D")).max()
+        weekly_group_df = daily_grouped_df[["cnt", "max"]].groupby(pd.Grouper(freq="1W")).mean()
+        weekly_group_df["cnt"].plot(ax=ax, label=org.name)
+    ax.grid(True)
+    ax.legend()
+    ax.set(xlabel='Date/Time', ylabel='Number of Visitors')
+    f.tight_layout()
+    file = "comparison.svg"
+    f.savefig(os.path.join(target_dir, file))
+    return Chart(title="Wochenmittel über die tägliche Maximal-Auslastung", path=file)
+
+
 def format_now():
     return datetime.now(pytz.timezone('Europe/Berlin')).isoformat('T', 'seconds')
 
@@ -169,6 +193,13 @@ def render_landing_page(orgs, target_dir):
     rendered_html = main_template.render(orgs=orgs, created_at=format_now())
     with open(os.path.join(target_dir, "index.html"), "w") as f:
         f.write(rendered_html)
+
+
+def render_comparison_page(charts, target_dir):
+    rendered_html = compare_template.render(charts=charts, created_at=format_now())
+    with open(os.path.join(target_dir, "index.html"), "w") as f:
+        f.write(rendered_html)
+
 
 def copy_static_files(target_dir):
     shutil.copytree("./static", os.path.join(target_dir, "static"), dirs_exist_ok=True)
