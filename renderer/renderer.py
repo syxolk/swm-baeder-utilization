@@ -47,7 +47,7 @@ def load_data(input_dir, target_dir):
         df["util"] = df["cnt"] / df["max"]
         df["util_percent"] = df["util"] * 100
         org = Organization(name=name, df=df)
-        #render_org(org, target_dir)
+        render_org(org, target_dir)
         orgs.append(org)
         logger.info(f"Running {name} ... done")
 
