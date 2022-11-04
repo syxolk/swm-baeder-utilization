@@ -168,7 +168,7 @@ def render_raw_last_24_hours_bar(org: Organization, target_dir):
     grouped_df = filtered_df[["cnt", "max"]].groupby(pd.Grouper(freq="1H")).max()
     grouped_df['hour'] = grouped_df.index.to_series().dt.hour
 
-    f, ax = plt.subplots(figsize=(8, 2))
+    f, ax = plt.subplots(figsize=(12, 3))
     grouped_df["cnt"].plot.bar(ax=ax, width=0.9)
     ax.grid(axis="y")
     ax.set(xlabel='', ylabel='')
