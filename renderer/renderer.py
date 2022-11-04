@@ -168,18 +168,19 @@ def render_raw_last_24_hours_bar(org: Organization, target_dir):
     grouped_df = filtered_df[["cnt", "max"]].groupby(pd.Grouper(freq="1H")).max()
     grouped_df['hour'] = grouped_df.index.to_series().dt.hour
 
-    f, ax = plt.subplots(figsize=(7, 2))
+    f, ax = plt.subplots(figsize=(8, 4))
     grouped_df["cnt"].plot.bar(ax=ax, width=0.9)
     ax.grid(axis="y")
     ax.set(xlabel='Hour', ylabel='Visitors')
     ax.set_xticklabels(labels=grouped_df["hour"], rotation=0)
+    f.tight_layout()
     file = f"bar-24h-{org.name}.svg"
     f.savefig(os.path.join(target_dir, file))
     return Chart(title="Auslastung der letzten 24 Stunden", path=file)
 
 
 def render_comparison(orgs: Iterable[Organization], target_dir):
-    f, ax = plt.subplots(figsize=(10, 6))
+    f, ax = plt.subplots(figsize=(20, 12))
     for org in orgs:
         daily_grouped_df = org.df[["cnt", "max"]].groupby(pd.Grouper(freq="1D")).max()
         weekly_group_df = daily_grouped_df[["cnt", "max"]].groupby(pd.Grouper(freq="1W")).mean()
