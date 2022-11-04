@@ -168,10 +168,10 @@ def render_raw_last_24_hours_bar(org: Organization, target_dir):
     grouped_df = filtered_df[["cnt", "max"]].groupby(pd.Grouper(freq="1H")).max()
     grouped_df['hour'] = grouped_df.index.to_series().dt.hour
 
-    f, ax = plt.subplots(figsize=(8, 4))
+    f, ax = plt.subplots(figsize=(8, 2))
     grouped_df["cnt"].plot.bar(ax=ax, width=0.9)
     ax.grid(axis="y")
-    ax.set(xlabel='Hour', ylabel='Visitors')
+    ax.set(xlabel='', ylabel='')
     ax.set_xticklabels(labels=grouped_df["hour"], rotation=0)
     f.tight_layout()
     file = f"bar-24h-{org.name}.svg"

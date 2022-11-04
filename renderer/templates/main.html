@@ -9,11 +9,9 @@
 {% endblock %}
 
 {% block main %}
-    <ul>
     {% for org in orgs %}
-        <li><a href="{{ org.name }}">{{ org.name }}</a>
-            <img src="{{ org.chart_24h.path }}" />
-        </li>
+        <h3><a href="{{ org.name }}">{{ org.name }}</a><h3/>
+        <img src="{{ org.chart_24h.path }}" />
+        <hr/>
     {% endfor %}
-    </ul>
 {% endblock %}
