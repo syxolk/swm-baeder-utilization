@@ -25,7 +25,7 @@ main_template = env.get_template("main.html")
 compare_template = env.get_template("compare_page.html")
 
 
-Organization = namedtuple('Organization', ["name", "df"])
+Organization = namedtuple('Organization', ["name", "df", "chart_24h"])
 Chart = namedtuple("Chart", ["title", "path"])
 
 def main():
@@ -46,7 +46,7 @@ def load_data(input_dir, target_dir):
         df.loc[df["cnt"] < 0, "cnt"] = 0 # fix data with invalid data
         df["util"] = df["cnt"] / df["max"]
         df["util_percent"] = df["util"] * 100
-        org = Organization(name=name, df=df)
+        org = Organization(name=name, df=df, chart_24h=None)
         render_org(org, target_dir)
         orgs.append(org)
         logger.info(f"Running {name} ... done")
@@ -161,6 +161,23 @@ def render_raw_last_24_hours(org, target_dir):
     return Chart(title="Raw Utilization 24 hours", path=file)
 
 
+def render_raw_last_24_hours_bar(org: Organization, target_dir):
+    now = datetime.now(pytz.utc)
+    now_minus_24_hours = now - timedelta(hours=24)
+    filtered_df = org.df[org.df.index > now_minus_24_hours]
+    grouped_df = filtered_df[["cnt", "max"]].groupby(pd.Grouper(freq="1H")).max()
+    grouped_df['hour'] = grouped_df.index.to_series().dt.hour
+
+    f, ax = plt.subplots(figsize=(7, 2))
+    grouped_df["cnt"].plot.bar(ax=ax, width=0.9)
+    ax.grid(axis="y")
+    ax.set(xlabel='Hour', ylabel='Visitors')
+    ax.set_xticklabels(labels=grouped_df["hour"], rotation=0)
+    file = f"bar-24h-{org.name}.svg"
+    f.savefig(os.path.join(target_dir, file))
+    return Chart(title="Auslastung der letzten 24 Stunden", path=file)
+
+
 def render_comparison(orgs: Iterable[Organization], target_dir):
     f, ax = plt.subplots(figsize=(10, 6))
     for org in orgs:
@@ -190,6 +207,11 @@ def render_org_file(org, charts, target_dir):
 
 
 def render_landing_page(orgs, target_dir):
+    orgs = [Organization(**{
+        **org._asdict(),
+        "chart_24h": render_raw_last_24_hours_bar(org, target_dir)
+    }) for org in orgs]
+
     rendered_html = main_template.render(orgs=orgs, created_at=format_now())
     with open(os.path.join(target_dir, "index.html"), "w") as f:
         f.write(rendered_html)
